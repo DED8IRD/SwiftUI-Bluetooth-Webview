@@ -2,15 +2,18 @@
 //  ContentView.swift
 //  swift-demo
 //
-//  Created by Eunika Wu on 5/26/21.
+//  Created by Eunika Wu on 5/17/21.
+//  Copyright © 2021 LAIKA. All rights reserved.
 //
 
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        NavigationView {
+            UIWebView(url: URL(string: "https://eko-staging.pt.laika.com"))
+                .navigationBarTitle("Eko")
+        }
     }
 }
 
