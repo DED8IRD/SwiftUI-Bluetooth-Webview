@@ -10,10 +10,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        NavigationView {
-            UIWebView(url: URL(string: "https://eko-staging.pt.laika.com"))
-                .navigationBarTitle("Eko")
-        }
+        WebView(url: URL(string: "https://laika.com"))
     }
 }
 
