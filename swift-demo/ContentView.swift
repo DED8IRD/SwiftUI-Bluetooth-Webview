@@ -9,8 +9,11 @@
 import SwiftUI
 
 struct ContentView: View {
+    /// WebView state
     @StateObject var webviewData = WebViewData()
-
+    /// Bluetooth manager singleton
+    @ObservedObject var bleManager = BLEManager()
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -27,7 +30,9 @@ struct ContentView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        Text("Bluetooth powered: \(bleManager.poweredOn ? "on" : "off")")
     }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {
