@@ -13,13 +13,22 @@ struct ContentView: View {
     @StateObject var webviewData = WebViewData()
     /// Bluetooth manager singleton
     @ObservedObject var bleManager = BLEManager()
-    
+
     var body: some View {
         NavigationView {
-            VStack {
-                Button("Trigger") {
-                    webviewData.evaluateJS.send("rpc.setBluetoothStatus('on')")
-                    webviewData.evaluateJS.send("rpc.setDeviceConnection('Looking Stone')")
+            VStack(spacing: 10) {
+                Text("Bluetooth state: \(bleManager.state)")
+                Text("Device: \((bleManager.peripheral != nil) ? bleManager.peripheral.name ?? "Unknown" : "Unconnected")")
+                List(bleManager.candidatePeripherals) { peripheral in
+                    HStack {
+                        Text(peripheral.name)
+                        Spacer()
+                        Text(peripheral.uuid)
+                        Spacer()
+                        Text(String(peripheral.battery))
+                        Spacer()
+                        Text(String(peripheral.rssi))
+                    }
                 }
                 WebView(
                     // url: URLType.publicURL(path: "https://laika.com"), // Example for public url
@@ -30,9 +39,7 @@ struct ContentView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        Text("Bluetooth powered: \(bleManager.poweredOn ? "on" : "off")")
     }
-    
 }
 
 struct ContentView_Previews: PreviewProvider {
