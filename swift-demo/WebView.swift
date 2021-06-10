@@ -13,10 +13,10 @@ import SwiftUI
 import WebKit
 
 struct WebView: UIViewRepresentable {
-    
+
     /// URL to load into WebView
     let url: URL?
-    
+
     /// Create WebView
     /// - Parameter context: WebView context
     /// Returns WebKit WebView
@@ -27,8 +27,7 @@ struct WebView: UIViewRepresentable {
         config.defaultWebpagePreferences = prefs
         return WKWebView(frame: .zero, configuration: config)
     }
-    
-    
+
     /// Update WebView with url if the url exists
     /// - Parameter uiView: WebKit WebView
     /// - Parameter context: WebView context
