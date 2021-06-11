@@ -12,30 +12,27 @@ struct ContentView: View {
     /// WebView state
     @StateObject var webviewData = WebViewData()
     /// Bluetooth manager singleton
-    @ObservedObject var bleManager = BLEManager()
+    @StateObject var bleManager = BLEManager()
+    /// Device selection modal controller
+    @State private var deviceSelectModalOpen = false
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 10) {
-                Text("Bluetooth state: \(bleManager.state)")
-                Text("Device: \((bleManager.peripheral != nil) ? bleManager.peripheral.name ?? "Unknown" : "Unconnected")")
-                List(bleManager.candidatePeripherals) { peripheral in
-                    HStack {
-                        Text(peripheral.name)
-                        Spacer()
-                        Text(peripheral.uuid)
-                        Spacer()
-                        Text(String(peripheral.battery))
-                        Spacer()
-                        Text(String(peripheral.rssi))
+            WebView(
+                // url: URLType.publicURL(path: "https://laika.com"), // Example for public url
+                url: URLType.localURL(path: "index"),                 // Example for local url
+                webviewData: webviewData
+            )
+            .navigationBarTitle("Swift Demo", displayMode: .inline)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Connect") {
+                            deviceSelectModalOpen.toggle()
                     }
                 }
-                WebView(
-                    // url: URLType.publicURL(path: "https://laika.com"), // Example for public url
-                    url: URLType.localURL(path: "index"),                 // Example for local url
-                    webviewData: webviewData
-                )
-                .navigationBarTitle("Swift Demo", displayMode: .inline)
+            }
+            .sheet(isPresented: $deviceSelectModalOpen) {
+                DeviceSelectModal(bleManager: bleManager)
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
