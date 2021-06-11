@@ -14,7 +14,7 @@ struct ContentView: View {
     /// Bluetooth manager singleton
     @StateObject var bleManager = BLEManager()
     /// Device selection modal controller
-    @State private var deviceSelectModalOpen = false
+    @State var deviceSelectModalOpen = false
 
     var body: some View {
         NavigationView {
@@ -27,10 +27,12 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Connect") {
-                            deviceSelectModalOpen.toggle()
+                        deviceSelectModalOpen.toggle()
+                        bleManager.candidatePeripherals = []
+                        bleManager.centralManager.scanForPeripherals(withServices: nil, options: nil)
                     }
                 }
-            }
+            }            
             .sheet(isPresented: $deviceSelectModalOpen) {
                 DeviceSelectModal(bleManager: bleManager)
             }

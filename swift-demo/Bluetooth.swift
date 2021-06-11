@@ -19,7 +19,7 @@ class BLEManager: NSObject, ObservableObject {
     /// Peripheral candidates to select from
     @Published var candidatePeripherals = [Peripheral]()
     /// Connected peripheral
-    @Published var peripheral: CBPeripheral!
+    @Published var peripheral: CBPeripheral?
     /// BLE State
     @Published var state: String!
 
@@ -58,26 +58,39 @@ extension BLEManager: CBCentralManagerDelegate {
     /// Tells the delegate the central manager discovered a peripheral while scanning for devices
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String: Any], rssi RSSI: NSNumber) {
         // We can identify our peripheral by name, uuid, manufacturer id, or other info stored in advertisement data. Here, we want to connect to a Looking Stone device
+        let name = advertisementData[CBAdvertisementDataLocalNameKey] != nil
+            ? advertisementData[CBAdvertisementDataLocalNameKey] as? String
+            : peripheral.name
         let currentPeripheral = Peripheral(
             id: self.candidatePeripherals.count,
             uuid: peripheral.identifier.uuidString,
-            name: advertisementData[CBAdvertisementDataLocalNameKey] as? String ?? "Unknown",
+            name: name ?? "Unknown",
             battery: advertisementData[CBAdvertisementDataTxPowerLevelKey] as? Int ?? 100,
-            rssi: RSSI.intValue
+            rssi: RSSI.intValue,
+            peripheral: peripheral
         )
         self.candidatePeripherals.append(currentPeripheral)
 
-        if currentPeripheral.name == "Looking Stone" {
-            self.peripheral = peripheral
-            self.peripheral.delegate = self
-            self.centralManager.connect(peripheral, options: nil)
-            self.centralManager.stopScan()
-        }
+        // // Here is how you could programmatically connect to a device
+        // if currentPeripheral.name == "Looking Stone" {
+        //     self.peripheral = peripheral
+        //     self.peripheral.delegate = self
+        //     self.centralManager.connect(peripheral, options: nil)
+        //     self.centralManager.stopScan()
+        // }
     }
 
     /// Tells the central manager a peripheral has connected
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         peripheral.discoverServices(nil)
+    }
+
+    /// Connect to peripheral from candidates
+    func connectToCandidate(id: Int) {
+        self.peripheral = self.candidatePeripherals[id].peripheral
+        self.peripheral!.delegate = self
+        self.centralManager.connect(self.peripheral!, options: nil)
+        self.centralManager.stopScan()
     }
 }
 
@@ -109,4 +122,5 @@ struct Peripheral: Identifiable {
     let name: String
     let battery: Int
     let rssi: Int
+    let peripheral: CBPeripheral
 }
