@@ -10,7 +10,14 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        WebView(url: URL(string: "https://laika.com"))
+        NavigationView {
+            WebView(
+                // url: URLType.publicURL(path: "https://laika.com") // Example for public url
+                url: URLType.localURL(path: "index")                 // Example for local url
+            )
+                .navigationBarTitle("Swift Demo", displayMode: .inline)
+        }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

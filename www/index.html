@@ -1,0 +1,44 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Swift Demo</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div style="display:grid;align-items:center;justify-content:center">
+        <p>Bluetooth: <span id="bluetooth">Unknown</span></p>
+        <p>Device: <span id="device">Unknown</span></p>
+    </div>
+
+    <script>
+        const BLUETOOTH_CONNECTION_EVENT = 'bluetoothStatusChange';
+        const DEVICE_CONNECTION_EVENT = 'deviceConnectionChange';
+
+        // RPC
+        const RPC = {
+            setBluetoothStatus(status) {
+                const event = new CustomEvent(BLUETOOTH_CONNECTION_EVENT, {
+                    detail: status,
+                });
+                window.dispatchEvent(event);
+            },
+            setDeviceConnection(isConnected) {
+                const event = new CustomEvent(DEVICE_CONNECTION_EVENT, {
+                    detail: isConnected,
+                });
+                window.dispatchEvent(event);
+            },
+        }
+
+        // Event handlers
+        window.addEventListener(BLUETOOTH_CONNECTION_EVENT, event => {
+            document.querySelector("#bluetooth").innerHTML = event.detail;
+        })
+
+        window.addEventListener(DEVICE_CONNECTION_EVENT, event => {
+            document.querySelector("#device").innerHTML = event.detail;
+        })
+    </script>
+</body>
+</html>

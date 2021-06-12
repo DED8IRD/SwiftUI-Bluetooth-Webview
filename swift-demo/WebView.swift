@@ -15,7 +15,7 @@ import WebKit
 struct WebView: UIViewRepresentable {
 
     /// URL to load into WebView
-    let url: URL?
+    let url: URLType?
 
     /// Create WebView
     /// - Parameter context: WebView context
@@ -32,8 +32,21 @@ struct WebView: UIViewRepresentable {
     /// - Parameter uiView: WebKit WebView
     /// - Parameter context: WebView context
     func updateUIView(_ uiView: WKWebView, context: Context) {
-        guard let webviewURL = url else { return }
-        let request = URLRequest(url: webviewURL)
-        uiView.load(request)
+        switch url {
+            case .localURL(let path):
+                let request = Bundle.main.url(forResource: path, withExtension: "html", subdirectory: "www")!
+                uiView.loadFileURL(request, allowingReadAccessTo: (request.deletingLastPathComponent()))
+            case .publicURL(let path):
+                let request = URLRequest(url: URL(string: path)!)
+                uiView.load(request)
+            case .none:
+                print("No path supplied.")
+                fatalError()
+        }
     }
+}
+
+enum URLType {
+    case localURL(path: String)
+    case publicURL(path: String)
 }
