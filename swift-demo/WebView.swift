@@ -15,13 +15,14 @@ import Combine
 
 /// WebView wrapper view
 struct WebView: UIViewRepresentable {
-
     /// URL to load into WebView
     let url: URLType?
     /// WebView data
     @ObservedObject var webviewData: WebViewData
     /// WebView delegate name
     let webviewDelegateName = "iOSNative"
+    /// Code to immediately invoke on webview load
+    let onLoad: (() -> Void)?
 
     /// Coordinator to coordinate WKWebView's delegate functions
     func makeCoordinator() -> Coordinator {
@@ -45,8 +46,13 @@ struct WebView: UIViewRepresentable {
     /// - Parameter webview: WebKit WebView
     /// - Parameter context: WebView context
     func updateUIView(_ webview: WKWebView, context: Context) {
+        guard webviewData.shouldUpdate else {
+            webviewData.shouldUpdate.toggle()
+            return
+        }
         context.coordinator.evaluateJavaScript(data: webviewData)
         context.coordinator.delegate = webview
+
         switch url {
             case .localURL(let path):
                 let request = Bundle.main.url(forResource: path, withExtension: "html", subdirectory: "www")!
@@ -65,7 +71,6 @@ struct WebView: UIViewRepresentable {
     // This coordinator will allow us to access the webview object in our bluetooth manager
     // to trigger some JS during bluetooth connections and updates.
     class Coordinator: NSObject {
-
         /// Parent View object
         var parent: WebView
         /// Delegate to access the inner WebKit WebView object
@@ -84,6 +89,7 @@ struct WebView: UIViewRepresentable {
         /// Evaluate JS wrapper
         func evaluateJavaScript(data: WebViewData) {
             self.subscriber = data.evaluateJS.sink(receiveValue: { rawJS in
+                print(rawJS)
                 self.delegate?.evaluateJavaScript(rawJS)
             })
         }
@@ -92,11 +98,13 @@ struct WebView: UIViewRepresentable {
 
 /// Extend Coordinator to handle JS messages
 extension WebView.Coordinator: WKScriptMessageHandler {
-
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         // Make sure your passed delegate is called
         if message.name == self.parent.webviewDelegateName {
-            print("Message received: \(message.body)")
+            // Invoke onLoad callback when the webpage is fully loaded
+            if message.body as? String == "Loaded" {
+                self.parent.onLoad?()
+            }
         }
     }
 }
@@ -105,6 +113,7 @@ extension WebView.Coordinator: WKScriptMessageHandler {
 class WebViewData: ObservableObject {
     /// Passthrough raw JS to evaluate in WKWebView instance
     var evaluateJS = PassthroughSubject<String, Never>()
+    var shouldUpdate = true
 }
 
 enum URLType {

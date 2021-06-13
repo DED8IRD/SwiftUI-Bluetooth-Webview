@@ -13,31 +13,26 @@ import Foundation
 import CoreBluetooth
 
 class BLEManager: NSObject, ObservableObject {
-
     /// Central Manager
     var centralManager: CBCentralManager!
     /// Peripheral candidates to select from
     @Published var candidatePeripherals = [Peripheral]()
     /// Connected peripheral
-    @Published var peripheral: CBPeripheral?
+    @Published var device: Peripheral?
     /// BLE State
     @Published var state: String!
     /// Bluetooth state change callback
-    var onCentralStateChange: ((_ state: String) -> Void)?
+    var onBluetoothStateChange: (() -> Void)?
     /// Device connection change callback
-    var onDeviceConnectionChange: ((_ device: Peripheral?) -> Void)?
+    var onDeviceConnectionChange: (() -> Void)?
 
-    init(
-        onBluetoothStateChange: ((_ state: String) -> Void)? = nil,
-        onDeviceConnection: ((_ device: Peripheral?) -> Void)? = nil
-    ) {
-        state = "Initializing"
-        onCentralStateChange = onBluetoothStateChange
-        onDeviceConnectionChange = onDeviceConnection
+    override init() {
         super.init()
+        state = "Initializing"
+        onBluetoothStateChange = nil
+        onDeviceConnectionChange = nil
         centralManager = CBCentralManager(delegate: self, queue: nil)
         centralManager.delegate = self
-
     }
 }
 
@@ -62,7 +57,7 @@ extension BLEManager: CBCentralManagerDelegate {
             self.state = "error"
             fatalError()
         }
-        self.onCentralStateChange?(self.state)
+        self.onBluetoothStateChange?()
         print("central.state is: \(self.state ?? "unknown")")
     }
 
@@ -98,10 +93,10 @@ extension BLEManager: CBCentralManagerDelegate {
 
     /// Connect to peripheral from candidates
     func connectToCandidate(id: Int) {
-        self.peripheral = self.candidatePeripherals[id].peripheral
-        self.peripheral!.delegate = self
-        self.centralManager.connect(self.peripheral!, options: nil)
-        self.onDeviceConnectionChange?(self.candidatePeripherals[id])
+        self.device = self.candidatePeripherals[id]
+        self.device!.peripheral.delegate = self
+        self.centralManager.connect(self.device!.peripheral, options: nil)
+        self.onDeviceConnectionChange?()
         self.centralManager.stopScan()
     }
 }

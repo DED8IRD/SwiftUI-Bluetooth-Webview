@@ -36,7 +36,7 @@ struct DeviceSelectModal: View {
                                 Text(String(peripheral.rssi)).frame(width: metrics.size.width * 0.2, alignment: .leading)
                             }
                         }
-                        .disabled(peripheral.uuid == bleManager.peripheral?.identifier.uuidString ?? "No match")
+                        .disabled(peripheral.uuid == bleManager.device?.uuid ?? "No match")
                     }
                 }
             }
