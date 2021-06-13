@@ -4,11 +4,34 @@
     <title>Swift Demo</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            font-family: sans-serif;
+        }
+        .container {
+            height: 100%;
+            display: grid;
+            align-items: center;
+            align-content: center;
+            justify-content: center;
+        }
+    </style>
 </head>
 <body>
-    <div style="display:grid;align-items:center;justify-content:center">
-        <p>Bluetooth: <span id="bluetooth">Unknown</span></p>
-        <p>Device: <span id="device">Unknown</span></p>
+    <div class="container">
+        <table>
+            <tr>
+                <th>Bluetooth Status</th>
+            </tr>
+            <tr>
+                <td>Bluetooth</td><td id="bluetooth">...</td>
+            </tr>
+            <tr>
+               <td>Device</td><td id="device">...</td>
+            </tr>
+        </table>
     </div>
 
     <script>
