@@ -16,7 +16,7 @@
         const DEVICE_CONNECTION_EVENT = 'deviceConnectionChange';
 
         // RPC
-        const RPC = {
+        const rpc = {
             setBluetoothStatus(status) {
                 const event = new CustomEvent(BLUETOOTH_CONNECTION_EVENT, {
                     detail: status,

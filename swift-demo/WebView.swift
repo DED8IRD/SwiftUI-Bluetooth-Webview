@@ -12,10 +12,16 @@
 import SwiftUI
 import WebKit
 
+/// WebView wrapper view
 struct WebView: UIViewRepresentable {
 
     /// URL to load into WebView
     let url: URLType?
+
+    /// Initialize a coordinator to coordinate WKWebView's delegate functions
+    func makeCoordinator() -> WebViewCoordinator {
+        WebViewCoordinator(self)
+    }
 
     /// Create WebView
     /// - Parameter context: WebView context
@@ -29,20 +35,36 @@ struct WebView: UIViewRepresentable {
     }
 
     /// Update WebView with url if the url exists
-    /// - Parameter uiView: WebKit WebView
+    /// - Parameter webview: WebKit WebView
     /// - Parameter context: WebView context
-    func updateUIView(_ uiView: WKWebView, context: Context) {
+    func updateUIView(_ webview: WKWebView, context: Context) {
         switch url {
             case .localURL(let path):
                 let request = Bundle.main.url(forResource: path, withExtension: "html", subdirectory: "www")!
-                uiView.loadFileURL(request, allowingReadAccessTo: (request.deletingLastPathComponent()))
+                webview.loadFileURL(request, allowingReadAccessTo: (request.deletingLastPathComponent()))
             case .publicURL(let path):
                 let request = URLRequest(url: URL(string: path)!)
-                uiView.load(request)
+                webview.load(request)
             case .none:
                 print("No path supplied.")
                 fatalError()
         }
+    }
+}
+
+/// Coordinator to act as a delegate for the WebView
+// SwiftUI coordinators act as delegates that respond to events that occur elsewhere.
+// This coordinator will allow us to access the webview object in our bluetooth manager
+// to trigger some JS during bluetooth connections and updates.
+class WebViewCoordinator: NSObject, WKNavigationDelegate {
+
+    /// Parent View object
+    var parent: WebView
+    /// Delegate to access the inner WebKit WebView object
+    weak var delegate: WKWebView?
+
+    init(_ webview: WebView) {
+        self.parent = webview
     }
 }
 
