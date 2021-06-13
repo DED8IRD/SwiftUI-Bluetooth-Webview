@@ -22,12 +22,22 @@ class BLEManager: NSObject, ObservableObject {
     @Published var peripheral: CBPeripheral?
     /// BLE State
     @Published var state: String!
+    /// Bluetooth state change callback
+    var onCentralStateChange: ((_ state: String) -> Void)?
+    /// Device connection change callback
+    var onDeviceConnectionChange: ((_ device: Peripheral?) -> Void)?
 
-    override init() {
+    init(
+        onBluetoothStateChange: ((_ state: String) -> Void)? = nil,
+        onDeviceConnection: ((_ device: Peripheral?) -> Void)? = nil
+    ) {
+        state = "Initializing"
+        onCentralStateChange = onBluetoothStateChange
+        onDeviceConnectionChange = onDeviceConnection
         super.init()
         centralManager = CBCentralManager(delegate: self, queue: nil)
         centralManager.delegate = self
-        state = "Initializing"
+
     }
 }
 
@@ -44,14 +54,15 @@ extension BLEManager: CBCentralManagerDelegate {
           case .unauthorized:
             self.state = "unauthorized"
           case .poweredOff:
-            self.state = "poweredOff"
+            self.state = "off"
           case .poweredOn:
-            self.state = "poweredOn"
+            self.state = "on"
             centralManager.scanForPeripherals(withServices: nil, options: nil)
         @unknown default:
             self.state = "error"
             fatalError()
         }
+        self.onCentralStateChange?(self.state)
         print("central.state is: \(self.state ?? "unknown")")
     }
 
@@ -90,6 +101,7 @@ extension BLEManager: CBCentralManagerDelegate {
         self.peripheral = self.candidatePeripherals[id].peripheral
         self.peripheral!.delegate = self
         self.centralManager.connect(self.peripheral!, options: nil)
+        self.onDeviceConnectionChange?(self.candidatePeripherals[id])
         self.centralManager.stopScan()
     }
 }

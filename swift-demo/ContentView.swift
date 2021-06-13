@@ -12,7 +12,14 @@ struct ContentView: View {
     /// WebView state
     @StateObject var webviewData = WebViewData()
     /// Bluetooth manager singleton
-    @StateObject var bleManager = BLEManager()
+    @StateObject var bleManager = BLEManager(
+        onBluetoothStateChange: ({ (bluetoothState: String) -> Void in
+            print(bluetoothState)
+        }),
+        onDeviceConnection: ({ (peripheral: Peripheral?) -> Void in
+            print(peripheral!)
+        })
+    )
     /// Device selection modal controller
     @State var deviceSelectModalOpen = false
 
@@ -32,7 +39,7 @@ struct ContentView: View {
                         bleManager.centralManager.scanForPeripherals(withServices: nil, options: nil)
                     }
                 }
-            }            
+            }
             .sheet(isPresented: $deviceSelectModalOpen) {
                 DeviceSelectModal(bleManager: bleManager)
             }
