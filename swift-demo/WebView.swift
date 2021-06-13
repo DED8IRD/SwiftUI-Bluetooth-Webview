@@ -45,6 +45,7 @@ struct WebView: UIViewRepresentable {
     /// - Parameter webview: WebKit WebView
     /// - Parameter context: WebView context
     func updateUIView(_ webview: WKWebView, context: Context) {
+        context.coordinator.evaluateJavaScript(data: webviewData)
         context.coordinator.delegate = webview
         switch url {
             case .localURL(let path):
@@ -69,14 +70,20 @@ struct WebView: UIViewRepresentable {
         var parent: WebView
         /// Delegate to access the inner WebKit WebView object
         weak var delegate: WKWebView?
+        /// Subscribe WebViewData to the WKWebView instance to emit JS
+        private var subscriber: AnyCancellable?
 
         init(_ webview: WebView) {
             self.parent = webview
         }
 
+        deinit {
+            self.subscriber?.cancel()
+        }
+
         /// Evaluate JS wrapper
-        func evaluateJavaScript(data: WebViewData) -> AnyCancellable {
-            return data.evaluateJS.sink(receiveValue: { rawJS in
+        func evaluateJavaScript(data: WebViewData) {
+            self.subscriber = data.evaluateJS.sink(receiveValue: { rawJS in
                 self.delegate?.evaluateJavaScript(rawJS)
             })
         }

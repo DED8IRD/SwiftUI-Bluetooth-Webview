@@ -13,12 +13,18 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            WebView(
-                // url: URLType.publicURL(path: "https://laika.com"), // Example for public url
-                url: URLType.localURL(path: "index"),                 // Example for local url
-                webviewData: webviewData
-            )
+            VStack {
+                Button("Trigger") {
+                    webviewData.evaluateJS.send("rpc.setBluetoothStatus('on')")
+                    webviewData.evaluateJS.send("rpc.setDeviceConnection('Looking Stone')")
+                }
+                WebView(
+                    // url: URLType.publicURL(path: "https://laika.com"), // Example for public url
+                    url: URLType.localURL(path: "index"),                 // Example for local url
+                    webviewData: webviewData
+                )
                 .navigationBarTitle("Swift Demo", displayMode: .inline)
+            }
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
