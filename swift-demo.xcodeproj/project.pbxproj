@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9646592E26603319007A80C3 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9646592D26603319007A80C3 /* WebView.swift */; };
+		966F7B512674271A000F6DE1 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 966F7B502674271A000F6DE1 /* www */; };
 		96A13735265EEB4300A1825F /* swift_demoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A13734265EEB4300A1825F /* swift_demoApp.swift */; };
 		96A13737265EEB4300A1825F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A13736265EEB4300A1825F /* ContentView.swift */; };
 		96A13739265EEB4400A1825F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96A13738265EEB4400A1825F /* Assets.xcassets */; };
@@ -33,6 +35,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9646592D26603319007A80C3 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		966F7B502674271A000F6DE1 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
 		96A13731265EEB4300A1825F /* swift-demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "swift-demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		96A13734265EEB4300A1825F /* swift_demoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swift_demoApp.swift; sourceTree = "<group>"; };
 		96A13736265EEB4300A1825F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -75,6 +79,7 @@
 		96A13728265EEB4300A1825F = {
 			isa = PBXGroup;
 			children = (
+				966F7B502674271A000F6DE1 /* www */,
 				96A13733265EEB4300A1825F /* swift-demo */,
 				96A13745265EEB4400A1825F /* swift-demoTests */,
 				96A13750265EEB4400A1825F /* swift-demoUITests */,
@@ -100,6 +105,7 @@
 				96A13738265EEB4400A1825F /* Assets.xcassets */,
 				96A1373D265EEB4400A1825F /* Info.plist */,
 				96A1373A265EEB4400A1825F /* Preview Content */,
+				9646592D26603319007A80C3 /* WebView.swift */,
 			);
 			path = "swift-demo";
 			sourceTree = "<group>";
@@ -233,6 +239,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				966F7B512674271A000F6DE1 /* www in Resources */,
 				96A1373C265EEB4400A1825F /* Preview Assets.xcassets in Resources */,
 				96A13739265EEB4400A1825F /* Assets.xcassets in Resources */,
 			);
@@ -259,6 +266,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9646592E26603319007A80C3 /* WebView.swift in Sources */,
 				96A13737265EEB4300A1825F /* ContentView.swift in Sources */,
 				96A13735265EEB4300A1825F /* swift_demoApp.swift in Sources */,
 			);
