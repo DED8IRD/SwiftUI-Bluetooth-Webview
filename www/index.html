@@ -52,16 +52,21 @@
                 });
                 window.dispatchEvent(event);
             },
-        }
+        };
 
         // Event handlers
+        window.addEventListener('load', _ => {
+            // Invoke function from webview
+            window.webkit.messageHandlers.iOSNative.postMessage("Loaded");
+        });
+        
         window.addEventListener(BLUETOOTH_CONNECTION_EVENT, event => {
             document.querySelector("#bluetooth").innerHTML = event.detail;
-        })
+        });
 
         window.addEventListener(DEVICE_CONNECTION_EVENT, event => {
             document.querySelector("#device").innerHTML = event.detail;
-        })
+        });
     </script>
 </body>
 </html>

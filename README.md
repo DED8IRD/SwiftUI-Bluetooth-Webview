@@ -38,4 +38,38 @@ Our webview can evaluate JS, but to trigger JS from elsewhere in the app, we nee
 
 ## Bluetooth
 
-TODO
+We define a bluetooth manager that handles scanning for bluetooth status updates, nearby devices ("peripherals"), and device connections. 
+
+### BLEManager
+
+#### CoreBluetooth
+
+`BLEManager` adopts the `CBCentralManagerDelegate` protocol, which allows it to access BLE state (bluetooth on/off/unsupported/etc.), and define behavior for discovering  and connecting to peripherals. 
+
+`BLEManager` also adopts the `CBPeripheralDelegate` protocol, which allows it to access peripheral services and characteristics.
+
+### Evoke JS when handling bluetooth events
+
+We want to trigger update to the webview when the bluetooth state changes: i.e. render updates when bluetooth changes from on/off and display which peripheral we connect to.
+
+We accomplish this by defining callback params in `BLEManager` in `ContentView`: `onBluetoothStateChange` & `onDeviceConnectionChange`
+
+These callbacks evaluate JS in the webview and evoke RPC methods in our web app (see `/www/index.html`).
+
+### Evoke bluetooth events when handling JS events
+
+We can also trigger events in our iOS app from the web app's side through invoking our delegate functions.
+
+In `/www/index.html`:
+```js
+window.addEventListener('load', _ => {
+    // Invoke function from webview
+    window.webkit.messageHandlers.iOSNative.postMessage("Loaded");
+});
+```
+
+We configured our webview coordinator via `WKWebView.configuration.userContentController` and gave it the name `iOSNative`. 
+We can send messages to our iOS app via `window.webkit.messageHandlers.${DELEGATE_NAME}.postMessage(${MESSAGE})`. 
+In the example above, we want to signal to our iOS app when the webpage is fully loaded so we can immediately render the bluetooth status.
+
+
