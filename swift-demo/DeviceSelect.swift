@@ -27,7 +27,10 @@ struct DeviceSelectModal: View {
                     }
                     .padding(.top, 20)
                     Divider()
-                    List(bleManager.candidatePeripherals) { peripheral in
+                    // Sort peripherals by BLE strength
+                    List(bleManager.candidatePeripherals.sorted(by: { (prev: Peripheral, next: Peripheral) -> Bool in
+                        return prev.rssi > next.rssi
+                    })) { peripheral in
                         Button(action: { bleManager.connectToCandidate(id: peripheral.id) }) {
                             HStack(spacing: 20) {
                                 Text(peripheral.name).frame(width: metrics.size.width * 0.2, alignment: .leading)
